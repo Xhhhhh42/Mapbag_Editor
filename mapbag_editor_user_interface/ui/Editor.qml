@@ -38,6 +38,9 @@ Rectangle {
         onAccepted: {
             Service.callAsync("/mapbag_editor_server_node/modechange", "hector_std_msgs/StringService", {param: "2"})
             deleteSubmapDialog.polygonpointTool.tool.deleteSubmap()
+            polygonpointTool.tool.publishToServer()
+            polygonpointTool.tool.clearPolygonpoints()
+            polygonpointTool.tool.clearmap()
             deleteSubmapDialog.close()
         }
         dialogtext: "Do you really want to delete submap ? "
@@ -64,7 +67,7 @@ Rectangle {
                     Layout.preferredHeight: Units.pt(22)
 
                     StyledButton {
-                        Layout.preferredWidth: Units.pt(140)
+                        Layout.preferredWidth: Units.pt(138)
                         style: Style.activeStyle
                                 
                         contentItem: Rectangle {
@@ -75,7 +78,7 @@ Rectangle {
                                 anchors.fill: parent
                                 Text {
                                     Layout.alignment: Qt.AlignHCenter
-                                    text: qsTr("Integrate to Mapbag")
+                                    text: qsTr("Save current height")
                                     font { pointSize: 13; weight: Font.Bold }
                                     color: "white"
                                 }
@@ -156,6 +159,8 @@ Rectangle {
                             var msgArray = getMsg()
                             Service.callAsync("/mapbag_editor_server_node/interpolation", "hector_std_msgs/StringService", 
                                             {})
+                            polygonpointTool.tool.clearPolygonpoints()
+                            polygonpointTool.tool.clearmap()
                         }
                     }
                 }
@@ -183,7 +188,12 @@ Rectangle {
                                 }
                             }
                         }
-                        onClicked: { polygonpointTool.tool.smooth_filter() }
+                        onClicked: { 
+                            polygonpointTool.tool.smooth_filter()
+                            polygonpointTool.tool.publishToServer()
+                            polygonpointTool.tool.clearPolygonpoints()
+                            polygonpointTool.tool.clearmap()
+                        }
                     }
                 }
             }

@@ -100,6 +100,8 @@ public:
 
     Q_INVOKABLE void smooth_filter(); 
 
+    Q_INVOKABLE void onInterpolation();
+
     void publishToolmapInformation( const typename hector_world_heightmap::HeightmapRef<float>::ConstPtr &map );
 
 signals:

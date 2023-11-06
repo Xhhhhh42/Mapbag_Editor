@@ -43,7 +43,7 @@ MapbagEditorServer<Scalar>::MapbagEditorServer( const ros::NodeHandle &nh, const
   save_service_ = pnh_.advertiseService( "save_map", &MapbagEditorServer<Scalar>::onSaveMap, this );
   load_service_ = pnh_.advertiseService( "load_map", &MapbagEditorServer<Scalar>::onLoadMap, this );
   polygongridmap_service_ = pnh_.advertiseService( "polygongridmap", &MapbagEditorServer<Scalar>::onPolygonGridMap, this );
-  interpolation_service_ = pnh_.advertiseService( "interpolation", &MapbagEditorServer<Scalar>::onInterpolation, this );
+  // interpolation_service_ = pnh_.advertiseService( "interpolation", &MapbagEditorServer<Scalar>::onInterpolation, this );
   clearmapbag_service_ = pnh_.advertiseService( "clearmapbag", &MapbagEditorServer<Scalar>::onClearMapbag, this );
   undo_service_ = pnh_.advertiseService( "undo", &MapbagEditorServer<Scalar>::onUndo, this );
   redo_service_ = pnh_.advertiseService( "redo", &MapbagEditorServer<Scalar>::onRedo, this );
@@ -558,8 +558,8 @@ bool MapbagEditorServer<Scalar>::interpolation()
     
     if( isnan( submap_->getValueAt( index ) ) ) {
       Scalar nan_bilinear = numeric_limits<Scalar>::quiet_NaN();
-      ROS_INFO_STREAM_NAMED( "MapbagEditorServer",
-                      "interpolation: " << it[0] << "y: "<< it[1] );
+      // ROS_INFO_STREAM_NAMED( "MapbagEditorServer",
+      //                 "interpolation: " << it[0] << "y: "<< it[1] );
 
       auto left_result = findNearestNonNaN( rowToIndicesMap[it[0]], { index.row, index.col - 1 }, 0, -1 );
       auto right_result = findNearestNonNaN( rowToIndicesMap[it[0]], { index.row, index.col + 1 }, 0, 1 );

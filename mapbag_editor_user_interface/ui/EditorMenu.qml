@@ -290,8 +290,8 @@ Rectangle {
                 Layout.leftMargin: Units.pt(61) 
                 Layout.topMargin: -Units.pt(3.5) 
                 color: style_eins
-                width: Units.pt(135)
-                height: Units.pt(72)
+                width: Units.pt(105)
+                height: Units.pt(50)
                 border {color: Material.color(Material.Grey, Material.Shade500); width: Units.pt(0.4)}
                 visible: menuBar_zwei.isClicked
 
@@ -300,42 +300,43 @@ Rectangle {
                     Layout.preferredHeight: Units.pt(24)
                     spacing: 0
 
-                    MenuButton {
-                        id: menuzwei_eins
-                        Layout.preferredWidth: Units.pt(133)
-                        Layout.preferredHeight: Units.pt(23)
-                        Layout.topMargin: Units.pt(1)
-                        Layout.leftMargin: Units.pt(1)
+                    // MenuButton {
+                    //     id: menuzwei_eins
+                    //     Layout.preferredWidth: Units.pt(133)
+                    //     Layout.preferredHeight: Units.pt(23)
+                    //     Layout.topMargin: Units.pt(1)
+                    //     Layout.leftMargin: Units.pt(1)
 
-                        contentItem: Rectangle {
-                            anchors.fill: parent
-                            color: "transparent"
+                    //     contentItem: Rectangle {
+                    //         anchors.fill: parent
+                    //         color: "transparent"
 
-                            RowLayout {
-                                anchors.fill: parent
-                                spacing: Units.pt(6)
+                    //         RowLayout {
+                    //             anchors.fill: parent
+                    //             spacing: Units.pt(6)
 
-                                Text {
-                                    Layout.alignment: Qt.AlignLeft
-                                    Layout.leftMargin: Units.pt(10)                
-                                    text: qsTr("Save Modifications")
-                                    font { pointSize: 13 }
-                                    color: "black"
-                                }
-                            }
-                        }
+                    //             Text {
+                    //                 Layout.alignment: Qt.AlignLeft
+                    //                 Layout.leftMargin: Units.pt(10)                
+                    //                 text: qsTr("Save Modifications")
+                    //                 font { pointSize: 13 }
+                    //                 color: "black"
+                    //             }
+                    //         }
+                    //     }
 
-                        onClicked: { 
-                            menuBar_zwei.isClicked = false
-                            polygonpointTool.tool.publishToServer()
-                            polygonpointTool.tool.clearPolygonpoints()
-                        }
-                    }
+                    //     onClicked: { 
+                    //         menuBar_zwei.isClicked = false
+                    //         polygonpointTool.tool.publishToServer()
+                    //         polygonpointTool.tool.clearPolygonpoints()
+                    //     }
+                    // }
 
                     MenuButton {
                         id: menuzwei_zwei
-                        Layout.preferredWidth: Units.pt(133)
+                        Layout.preferredWidth: Units.pt(103)
                         Layout.preferredHeight: Units.pt(23)
+                        Layout.topMargin: Units.pt(1)
                         Layout.leftMargin: Units.pt(1)
 
                         contentItem: Rectangle {
@@ -364,7 +365,7 @@ Rectangle {
 
                     MenuButton {
                         id: menu9
-                        Layout.preferredWidth: Units.pt(133)
+                        Layout.preferredWidth: Units.pt(103)
                         Layout.preferredHeight: Units.pt(23)
                         Layout.leftMargin: Units.pt(1)
 

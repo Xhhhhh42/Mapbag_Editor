@@ -20,6 +20,17 @@ Rectangle {
     signal polygonMode()
     signal pri_editorMode()
     signal wrongTransfer()
+
+    function change_pri_mode() { 
+        visible_bc = false
+        root.height = Units.pt(205)
+        root.pri_editorMode()
+    }
+
+    function start_mode() { 
+        visible_bc = false
+        root.height = Units.pt(205)
+    }
     
     color: Style.background.container
     width: Units.pt(200)
@@ -102,6 +113,7 @@ Rectangle {
                     polygonpointTool.tool.changeEditorMode( 0 )
                     visible_bc = !visible_bc
                     root.height = Units.pt(244)
+                    root.polygonMode()
                 }
             }
 
@@ -285,9 +297,10 @@ Rectangle {
         polygonpointTool: root.polygonpointTool
 
         onConfirmPolygon: { root.polygonMode() }
-        onChangeMode: { 
+        onPri_mode: { 
             visible_bc = !visible_bc
             root.height = Units.pt(205)
+            root.pri_editorMode()
         }
         onWrongInput: { root.wrongTransfer() }
     }

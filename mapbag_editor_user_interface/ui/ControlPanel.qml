@@ -25,6 +25,9 @@ Rectangle{
 
     signal save()
     signal clear()
+    signal cp_pri_mode()
+    signal editor_mode()
+    signal verschieben_mode()
 
     ColumnLayout {
         anchors.fill: parent
@@ -69,6 +72,7 @@ Rectangle{
                         font { pointSize: 13; weight: Font.Bold }
                         onClicked: {
                             polygonpointTool.tool.changeEditorMode( 2 )
+                            root.cp_pri_mode()
                         }
                     }
                     StyledTabButton {
@@ -77,6 +81,7 @@ Rectangle{
                         font { pointSize: 13; weight: Font.Bold }
                         onClicked: {
                             polygonpointTool.tool.changeEditorMode( 1 )
+                            root.editor_mode()
                         }
                     }
                     StyledTabButton {
@@ -85,6 +90,7 @@ Rectangle{
                         font { pointSize: 13; weight: Font.Bold }
                         onClicked: {
                             polygonpointTool.tool.changeEditorMode( 3 )
+                            root.verschieben_mode()
                         }
                     }
                 }

@@ -21,7 +21,7 @@ Rectangle {
     signal confirmPolygon()
     signal updatePolygon()
     signal wrongInput()
-    signal changeMode()
+    signal pri_mode()
     
     color: Style.background.container
     width: Units.pt(200)
@@ -407,7 +407,7 @@ Rectangle {
                         onClicked: {
                             polygonpointTool.tool.changeEditorMode( 2 )
                             polygonpointTool.tool.clearPolygonpoints()
-                            plist.changeMode()
+                            plist.pri_mode()
                         }
                     }
                 }

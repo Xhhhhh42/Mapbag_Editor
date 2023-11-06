@@ -469,6 +469,8 @@ Q_INVOKABLE void PolygonTool::clearmap()
 }
 
 
+/** Save the current Submap
+ */
 Q_INVOKABLE void PolygonTool::publishToServer()
 {
   if( whm_->getMap( 0 ) == nullptr ) return;
@@ -478,6 +480,8 @@ Q_INVOKABLE void PolygonTool::publishToServer()
 }
 
 
+/** empty Submap in Tool 
+ */
 void PolygonTool::publishEmpty() 
 {
   if( mapref_copy_ == nullptr ) return;
@@ -688,6 +692,7 @@ Q_INVOKABLE void PolygonTool::primitive( std::vector<int> mode, std::vector<doub
  */
 Q_INVOKABLE void PolygonTool::smooth_filter()
 {
+  if( map_ == nullptr ) return; 
   Eigen::Ref<hector_math::GridMap<float>> map_to_editieren = map_->map();
   hector_math::GridMap<float> gridMapCopy( map_to_editieren );
   hector_math::GridMap<float> smoothed_map = adaptiveMeanFilter( gridMapCopy, 3, 7 );
@@ -699,6 +704,7 @@ Q_INVOKABLE void PolygonTool::smooth_filter()
   heightmapIntegrator.integrate( map_, integrators::IntegratorMode::SourceKnown );
   publishToolmapInformation( whm_->getMap( 0 )); 
 }
+
 
 /** Publishing Submaps in Tools to RViz.
  * @param map Submap in PolygonTool.

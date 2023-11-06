@@ -54,6 +54,7 @@ Item {
         buttonRadius: Units.pt(4)
         shortcutFont: Qt.font({pointSize: 8})
         editable: false
+        visible : false
     }
 
     Image {
@@ -83,10 +84,12 @@ Item {
             controlPanel.editor_show() 
             pri_editor_visible = true 
             wrong_info_visible = false
+            toolBar.visible = true
         }
         onPri_editorMode: { 
             controlPanel.primitive_show() 
-            pri_editor_visible = true    
+            pri_editor_visible = true   
+            toolBar.visible = false 
         }
         onWrongTransfer: {
             wrong_info_visible = true
@@ -109,6 +112,18 @@ Item {
         }
         onClear: {
             menu.simulateClearClick()
+        }
+        onCp_pri_mode: {
+            toolBar.visible = false
+            basicController.change_pri_mode()
+        }
+        onEditor_mode: {
+            toolBar.visible = true
+            // basicController.change_polygon_mode()
+        }
+        onVerschieben_mode: {
+            toolBar.visible = true
+            basicController.start_mode()
         }
     }
 
