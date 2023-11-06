@@ -242,17 +242,17 @@ Rectangle {
                             anchors.topMargin: Units.pt(12)
 
                             Text {
-                                text: "Length( Index ) :  " + primitiveDialog.lengthpub 
+                                text: "( Index )Length :  " + primitiveDialog.lengthpub 
                                 visible: primitiveDialog.lengthpub > 0                    
                             }
 
                             Text {
-                                text: "    Width( Index ) :  " + primitiveDialog.widthpub
+                                text: "    Width :  " + primitiveDialog.widthpub
                                 visible: primitiveDialog.widthpub > 0
                             }
 
                             Text {
-                                text: "    Height( Index ) :  " + primitiveDialog.heightpub
+                                text: "    Height :  " + primitiveDialog.heightpub
                                 visible: primitiveDialog.heightpub > 0
                             }
                         }

@@ -266,7 +266,7 @@ Rectangle {
                     id: text_poly2
                     Layout.preferredWidth: Units.pt(175)
                     Layout.leftMargin: Units.pt(4)  
-                    text: "( Existing functions: Delete, Pan, Change height, Interpolate, Smooth )"
+                    text: "( Existing functions: Delete, Translation, Change height, Interpolation, Smooth )"
                     wrapMode: Text.WordWrap
                     color: "black"
                     visible: false
@@ -285,7 +285,6 @@ Rectangle {
         polygonpointTool: root.polygonpointTool
 
         onConfirmPolygon: { root.polygonMode() }
-        // onUpdatePolygon: { root.polygonMode() }
         onChangeMode: { 
             visible_bc = !visible_bc
             root.height = Units.pt(205)

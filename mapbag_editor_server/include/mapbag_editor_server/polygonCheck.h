@@ -10,7 +10,6 @@
 
 #include <ros/ros.h>
 #include <hector_math/types.h>
-// #include <unordered_set>
 #include <vector>
 #include <queue>
 
@@ -38,13 +37,11 @@ inline bool polygonCheck( const std::vector<hector_math::Vector3<Scalar>> &polyg
         hector_math::Vector3<Scalar> end_point;
     };
 
-    // std::unordered_set<hector_math::Vector3<Scalar>> points_set;
     std::priority_queue<Scalar> maxHeap_y_value;
     std::vector<Line_Segment> lines;
     std::vector<Line_Segment> active_lines;
     lines.reserve( polygon_points.size() );
     for ( const hector_math::Vector3<Scalar>& point : polygon_points) {
-        // points_set.insert( point );
         maxHeap_y_value.push( point[1] );
     }
 
@@ -78,11 +75,7 @@ inline bool polygonCheck( const std::vector<hector_math::Vector3<Scalar>> &polyg
                         for( const auto &element : polygon_points ) {
                             if( i_null == element ) founded = true;
                         }
-                        if( !founded ) {
-                            ROS_INFO_STREAM_NAMED( "MapbagEditorServer", 
-                                "Concavhull false" << i_null[0] << "y:" << i_null[1] << "z:" << i_null[2] );
-                            return false;
-                        } 
+                        if( !founded ) { return false; } 
                     }
                 }
             }

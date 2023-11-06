@@ -69,7 +69,6 @@ void PolygonTool::onInitialize()
   polygonpoint_preview_node_ = createPolygonpointNode();
   polygonpoint_preview_node_->setVisible( false );
   editor_mode_ = MODE_POLYGON;
-  automatisch_mode_ = Aktivieren;
 
   nh_ = ros::NodeHandle();
   resolution_sub_ = nh_.subscribe<std_msgs::Float64>(
@@ -195,7 +194,7 @@ int PolygonTool::processMouseEvent( rviz::ViewportMouseEvent &event )
   //   if( editor_mode_ == MODE_EDITOR && map_ == nullptr ) return Render;
   //   if( editor_mode_ == MODE_PRIMITIVE_ELEMENT && map_ref_ == nullptr ) return Render;
   } else if( editor_mode_ == MODE_EDITOR ){
-    // if( map_ == nullptr ) return Render;
+    if( map_ == nullptr ) return Render;
     Ogre::Vector3 intersection;
     static Ogre::Vector3 start_position;
     Ogre::Camera* camera = event.viewport->getCamera(); 
@@ -210,7 +209,7 @@ int PolygonTool::processMouseEvent( rviz::ViewportMouseEvent &event )
 
       //Initial sub-maps retained
       if( editor_mode_ == MODE_EDITOR ) { map_original_ = map_->map(); }
-      else if( editor_mode_ == MODE_PRIMITIVE_ELEMENT ) { map_original_ = map_ref_->map(); } 
+      // else if( editor_mode_ == MODE_PRIMITIVE_ELEMENT ) { map_original_ = map_ref_->map(); } 
       return Render;
     }
 
@@ -230,17 +229,18 @@ int PolygonTool::processMouseEvent( rviz::ViewportMouseEvent &event )
           map_ = std::make_shared<Heightmap<float>>( map_to_editieren, map_->resolution(), map_->origin(), 
                                                      map_->frame(), map_->timestamp() );
           heightmapIntegrator.integrate( map_, integrators::IntegratorMode::SourceKnown );                                          
-        } else if( editor_mode_ == MODE_PRIMITIVE_ELEMENT ) {
-          // typename hector_world_heightmap::Heightmap<float>::Ptr map_pri_changed;
-          map_ref_ = std::make_shared<Heightmap<float>>( map_to_editieren, map_ref_->resolution(), map_ref_->origin(), 
-                                                         map_ref_->frame(), map_ref_->timestamp() );
-          // heightmapIntegrator.integrate( map_ref_, integrators::IntegratorMode::SourceKnown );
-          // whm_->removeMap( whm_->getMap( 0 ) );
-          whm_ = make_shared<MapBag<float>>( resolution_ );
-          whm_->setFrame( map_ref_->frame() );
-          whm_->addMap( make_shared<Map<float>>
-                      ( map_ref_->map(), Vector3<float>( map_ref_->origin()[0], map_ref_->origin()[1], 0 ), map_ref_->resolution(), 0, 0 ));
-        }
+        } 
+        // else if( editor_mode_ == MODE_PRIMITIVE_ELEMENT ) {
+        //   // typename hector_world_heightmap::Heightmap<float>::Ptr map_pri_changed;
+        //   map_ref_ = std::make_shared<Heightmap<float>>( map_to_editieren, map_ref_->resolution(), map_ref_->origin(), 
+        //                                                  map_ref_->frame(), map_ref_->timestamp() );
+        //   // heightmapIntegrator.integrate( map_ref_, integrators::IntegratorMode::SourceKnown );
+        //   // whm_->removeMap( whm_->getMap( 0 ) );
+        //   whm_ = make_shared<MapBag<float>>( resolution_ );
+        //   whm_->setFrame( map_ref_->frame() );
+        //   whm_->addMap( make_shared<Map<float>>
+        //               ( map_ref_->map(), Vector3<float>( map_ref_->origin()[0], map_ref_->origin()[1], 0 ), map_ref_->resolution(), 0, 0 ));
+        // }
 
         tempo_ = QVector3D( 0, 0, tempo_ref_.z() + offset_z /  skalenfaktor_ );   
         emit tempoChanged();
@@ -254,9 +254,10 @@ int PolygonTool::processMouseEvent( rviz::ViewportMouseEvent &event )
       } 
     }
     return Render;
-  } else if ( editor_mode_ == MODE_VERSCHIEBEN ){
-    return Render;
   }
+  // } else if ( editor_mode_ == MODE_VERSCHIEBEN ){
+  //   return Render;
+  // }
 
   return rviz::InteractionTool::processMouseEvent( event );
 }
@@ -351,17 +352,6 @@ Q_INVOKABLE void PolygonTool::changeEditorMode( int editor_mode )
       pub_submap_pos_.publish( center_pose );
     }
   }
-}
-
-
-Q_INVOKABLE void PolygonTool::changeAutomatischMode( int automatisch_mode )
-{
-  if( automatisch_mode != 0 && automatisch_mode != 1 ) return;
-  if( automatisch_mode == 0 ){
-    automatisch_mode_ = Aktivieren;
-  } else if ( automatisch_mode == 1 ){
-    automatisch_mode_ = Deaktivieren;
-  } 
 }
 
 

@@ -275,7 +275,7 @@ Rectangle {
                             var msgArray = getMsg()
                             Service.callAsync( "/mapbag_editor_server_node/polygongridmap", "mapbag_editor_msgs/Submap", 
                                                 { datas: msgArray, mode: polygonmode }, function(response) { 
-                                                    if( response.result != 0 ) { plist.wrongInput() }
+                                                    if( response.result == 1 ) { plist.wrongInput() }
                                                 } )
                         }
                     }

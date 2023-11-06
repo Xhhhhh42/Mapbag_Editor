@@ -149,7 +149,7 @@ Visualization Manager:
       Angle: 0
       Animation Duration: 1
       Class: hector_rviz_plugins/HectorViewController
-      Distance: 8.82783317565918
+      Distance: 6.8499603271484375
       Enable Services: true
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
@@ -158,17 +158,17 @@ Visualization Manager:
         Value: false
       Enable Topics: true
       Eye:
-        X: 1.7158366441726685
-        Y: -8.155342102050781
-        Z: 5.618657112121582
+        X: -1.776747465133667
+        Y: -6.974750995635986
+        Z: 3.0205612182617188
       Eye 3D Offset:
         X: -7.62939453125e-06
         Y: 0
         Z: 3
       Focus:
-        X: 2.0947117805480957
-        Y: -1.4227958917617798
-        Z: -0.07870233058929443
+        X: 0.23630011081695557
+        Y: -1.1520768404006958
+        Z: 0.02622377872467041
       Invert Z Axis: false
       Keyboard Navigation: true
       Movement speed (m/s): 4

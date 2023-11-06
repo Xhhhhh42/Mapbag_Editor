@@ -266,12 +266,7 @@ void MapbagEditorServer<Scalar>::publishSubmapInformation( const size_t &points 
     // muss noch optimiert werden
     typename HeightmapRef<Scalar>::ConstPtr submap = mapbag_->getSubMap( polygon_points_[0], 1, 1 );
     if ( submap == nullptr ) { ROS_WARN_STREAM_NAMED( "MapbagEditorServer", " Submap ist leer. " ); }
-    // geometry_msgs::Pose center_pose;
-    // center_pose.position.x = polygon_points_[0][0];
-    // center_pose.position.y = polygon_points_[0][1];
-    // center_pose.position.z = polygon_points_[0][2];
-    // pub_submap_pos_.publish( center_pose );
-    // pub_submap_.publish( heightmapToMsg<Scalar>( submap ));
+    pub_submap_.publish( heightmapToMsg<Scalar>( submap ));
   } else {
     if ( whm_ == nullptr ) return;
     int i = 0;
@@ -286,11 +281,6 @@ void MapbagEditorServer<Scalar>::publishSubmapInformation( const size_t &points 
                           integrators::IntegratorMode::SourceKnown );
       i++;
     }
-    // geometry_msgs::Pose center_pose;
-    // center_pose.position.x = whm_->getMap( 0 )->origin()[0];
-    // center_pose.position.y = whm_->getMap( 0 )->origin()[1];
-    // center_pose.position.z = whm_->getMap( 0 )->origin()[2];
-    // pub_submap_pos_.publish( center_pose );
     pub_submap_.publish( heightmapToMsg<Scalar>( whm_->getMap( 0 )));
   }
 }
@@ -330,13 +320,7 @@ bool MapbagEditorServer<Scalar>::onPolygonGridMap( mapbag_editor_msgs::SubmapReq
 
     if( confirmed_points.size() == 1 || confirmed_points.size() == 2 || polygon_mode_ == ROOMWALLS ) { updatePolygonPoints( confirmed_points ); } 
     else if( polygon_mode_ == KONKAVHULL ) {
-      // if() {
-            //mode_test
-            // ROS_INFO_STREAM_NAMED( "MapbagEditorServer", req.mode );
-            //response_test
-            // resp.result = 23;
-      //   return polygonGridMap( polygon_points_ );
-      // }
+
       // concav_hull_generator_ = make_shared<Concav_Hull_Generator<Scalar>>( confirmed_points );
       // concav_hull_generator_->concavHull( confirmed_points, 3 );
       // std::vector<hector_math::Vector3<Scalar>> concav_points = concav_hull_generator_->concav_points();
@@ -349,7 +333,7 @@ bool MapbagEditorServer<Scalar>::onPolygonGridMap( mapbag_editor_msgs::SubmapReq
       { ROS_INFO_STREAM_NAMED( "MapbagEditorServer", 
                                 "Concavhull false, please check the input polygon points!" );
         resp.result = 1;
-      } else { resp.result = 0; }
+      } else { resp.result = 2; }
       updatePolygonPoints( confirmed_points );
     } else if( polygon_mode_ == KONVEXHULL ) {
       // For more points, compute the convex hull using Graham Scan

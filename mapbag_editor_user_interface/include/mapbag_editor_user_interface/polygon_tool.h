@@ -48,11 +48,6 @@ enum SelectionMode {
     Konvexhull
 };
 
-enum AutomatischMode {
-    Aktivieren,
-    Deaktivieren
-};
-
 public:
 
     PolygonTool();
@@ -80,8 +75,6 @@ public:
     Q_INVOKABLE void addPolygonpoint( float x, float y, float z );
 
     Q_INVOKABLE void changeEditorMode( int editor_mode );
-
-    Q_INVOKABLE void changeAutomatischMode( int automatisch_mode );
 
     Q_INVOKABLE void setMarker( int selected_Polygon_nummer );
 
@@ -158,7 +151,6 @@ protected:
     rviz::BoolProperty *polygonpoint_3d_proporty_ = nullptr;
 
     EditorMode editor_mode_;
-    AutomatischMode automatisch_mode_;
 
 private: 
     void submapSubscribe( const grid_map_msgs::GridMap &msg, hector_world_heightmap::Heightmap<float>::Ptr &map );

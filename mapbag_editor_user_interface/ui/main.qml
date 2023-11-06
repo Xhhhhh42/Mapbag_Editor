@@ -80,12 +80,12 @@ Item {
 
         onEditorMode: { editor_visible = true }
         onPolygonMode: { 
-            controlPanel.curr_index = 1 
+            controlPanel.editor_show() 
             pri_editor_visible = true 
             wrong_info_visible = false
         }
         onPri_editorMode: { 
-            controlPanel.curr_index = 0 
+            controlPanel.primitive_show() 
             pri_editor_visible = true    
         }
         onWrongTransfer: {

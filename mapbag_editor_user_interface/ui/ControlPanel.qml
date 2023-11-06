@@ -15,6 +15,14 @@ Rectangle{
     property var polygonpointTool
     property bool wrongInfo_visible
 
+    function primitive_show() {
+        bar.currentIndex = 0
+    }
+
+    function editor_show() {
+        bar.currentIndex = 1
+    }
+
     signal save()
     signal clear()
 
@@ -53,7 +61,7 @@ Rectangle{
                     Layout.fillWidth: true
                     spacing: 0
                     z: 1
-                    currentIndex: curr_index
+                    // currentIndex: curr_index
                     
                     StyledTabButton {
                         style: root.style
