@@ -64,7 +64,7 @@ Rectangle{
                     Layout.fillWidth: true
                     spacing: 0
                     z: 1
-                    // currentIndex: curr_index
+                    currentIndex: curr_index
                     
                     StyledTabButton {
                         style: root.style

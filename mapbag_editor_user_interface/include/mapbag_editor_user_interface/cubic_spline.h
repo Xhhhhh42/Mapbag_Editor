@@ -1,5 +1,5 @@
-#ifndef MAPBAG_EDITOR_SERVER_CUBIC_SPLINE_H
-#define MAPBAG_EDITOR_SERVER_CUBIC_SPLINE_H
+#ifndef MAPBAG_EDITOR_USER_INTERFACE_CUBIC_SPLINE_H
+#define MAPBAG_EDITOR_USER_INTERFACE_CUBIC_SPLINE_H
 
 #include <Eigen/Core>
 #include <Eigen/Geometry>
@@ -8,7 +8,7 @@
 #include <hector_math/types.h>
 #include <ros/ros.h>
 
-namespace mapbag_editor_server
+namespace mapbag_editor_user_interface
 {
 
 using namespace std;
@@ -37,8 +37,8 @@ private:
 	std::vector<Scalar> x_differences_;
 };
 
-} //namespace qml_class
+} // mapbag_editor_user_interface
 
 #include"cubic_spline_impl.hpp"
 
-#endif // MAPBAG_EDITOR_SERVER_CUBIC_SPLINE_H
+#endif // MAPBAG_EDITOR_USER_INTERFACE_CUBIC_SPLINE_H

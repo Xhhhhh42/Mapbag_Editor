@@ -223,7 +223,7 @@ Rectangle {
                             }
 
                             Text {
-                                text: "    Height( Index ) :  " + primitiveDialog.winkelpub
+                                text: "    ( Index ) Height :  " + primitiveDialog.winkelpub
                                 visible: primitiveDialog.winkelpub > 0
                                 
                             }
@@ -242,7 +242,7 @@ Rectangle {
                             anchors.topMargin: Units.pt(12)
 
                             Text {
-                                text: "( Index )Length :  " + primitiveDialog.lengthpub 
+                                text: "( Index )  Length :  " + primitiveDialog.lengthpub 
                                 visible: primitiveDialog.lengthpub > 0                    
                             }
 

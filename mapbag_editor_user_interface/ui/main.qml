@@ -32,7 +32,7 @@ Item {
         return polygonpointTool.tool.polygonpoints
     }
 
-    property bool outsideClicked
+    // property bool outsideClicked
 
     TimeRectangle {
         id: timeRectangle
@@ -147,4 +147,5 @@ Item {
             basicController.height = Units.pt(205)
         }
     }
+
 }

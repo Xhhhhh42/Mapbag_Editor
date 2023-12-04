@@ -300,38 +300,6 @@ Rectangle {
                     Layout.preferredHeight: Units.pt(24)
                     spacing: 0
 
-                    // MenuButton {
-                    //     id: menuzwei_eins
-                    //     Layout.preferredWidth: Units.pt(133)
-                    //     Layout.preferredHeight: Units.pt(23)
-                    //     Layout.topMargin: Units.pt(1)
-                    //     Layout.leftMargin: Units.pt(1)
-
-                    //     contentItem: Rectangle {
-                    //         anchors.fill: parent
-                    //         color: "transparent"
-
-                    //         RowLayout {
-                    //             anchors.fill: parent
-                    //             spacing: Units.pt(6)
-
-                    //             Text {
-                    //                 Layout.alignment: Qt.AlignLeft
-                    //                 Layout.leftMargin: Units.pt(10)                
-                    //                 text: qsTr("Save Modifications")
-                    //                 font { pointSize: 13 }
-                    //                 color: "black"
-                    //             }
-                    //         }
-                    //     }
-
-                    //     onClicked: { 
-                    //         menuBar_zwei.isClicked = false
-                    //         polygonpointTool.tool.publishToServer()
-                    //         polygonpointTool.tool.clearPolygonpoints()
-                    //     }
-                    // }
-
                     MenuButton {
                         id: menuzwei_zwei
                         Layout.preferredWidth: Units.pt(103)
@@ -468,6 +436,7 @@ Rectangle {
         nameFilters: [ "Map file (*.whm *.mapbag)", "All files (*)" ]
         fileMode: FileDialog.SaveFile
         onAccepted: {
+            Service.callAsync("/mapbag_editor_server_node/save_map", "hector_std_msgs/StringService", { param: file.toString().substr(7) })
         }
     }
 
@@ -478,7 +447,8 @@ Rectangle {
         nameFilters: [ "Map file (*.whm *.mapbag)", "All files (*)" ]
         onAccepted: {
             // Service.callAsync("/mapbag_editor_server_node/save_map", "hector_std_msgs/StringService", { param: fileUrl.toString().substr(7) })
-            Service.callAsync("/mapbag_editor_server_node/save_map", "hector_std_msgs/StringService", { param: file.toString().substr(7) })
+            // Service.callAsync("/mapbag_editor_server_node/save_map", "hector_std_msgs/StringService", { param: file.toString().substr(7) })
+            Service.callAsync("/mapbag_editor_server_node/save_map", "hector_std_msgs/StringService", { param: "save" })
         }
     }
 

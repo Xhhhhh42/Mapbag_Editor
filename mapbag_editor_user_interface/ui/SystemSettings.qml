@@ -140,9 +140,9 @@ Rectangle {
 
                 Text {
                     Layout.preferredHeight: Units.pt(20)
-                    Layout.topMargin: Units.pt(6)
-                    Layout.leftMargin: Units.pt(10)
-                    text: "Wrong Konkavhull Points"
+                    Layout.topMargin: Units.pt(8)
+                    Layout.leftMargin: Units.pt(31)
+                    text: "Point-in-Polygon"
                     color: "red"
                     visible: wronginfo
                 }
@@ -193,7 +193,7 @@ Rectangle {
                     Layout.preferredWidth: Units.pt(91)
                     Layout.topMargin: -Units.pt(2)
                     Layout.leftMargin: Units.pt(2)
-                    model: [ "Global", "Addtiv" ]
+                    model: [ "Global" ]
 
                     onActivated: {
                         if( intepolation_config != currentIndex ) {
@@ -221,13 +221,14 @@ Rectangle {
                     Layout.preferredHeight: Units.pt(20)
                     Layout.preferredWidth: Units.pt(124)
                     Layout.leftMargin: Units.pt(8)
-                    model: [ "Adaptive Filter", "Spline Curve" ]
+                    model: [ "Adaptive Filter", "Medien Filter", "Bezier Curve (x)", "Bezier Curve (y)" ]
 
                     onActivated: {
                         if( smooth_config != currentIndex ) {
                             smooth_config = currentIndex
                             Service.callAsync("/mapbag_editor_server_node/systemsettings", "mapbag_editor_msgs/Settings",
                                                     { polygon_mode: polygon_config, intepolation_mode: intepolation_config, smooth_mode: smooth_config })
+                            polygonpointTool.tool.changeSmoothMode( currentIndex )
                         }
                     }
                 }

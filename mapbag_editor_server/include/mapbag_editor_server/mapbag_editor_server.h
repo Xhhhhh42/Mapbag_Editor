@@ -3,7 +3,6 @@
 
 #include "grahamscan_ch_executor.h"
 #include "bresenhams_line_executor.h"
-#include "cubic_spline.h"
 #include "concav_hull_generator.h"
 
 #include <ros/ros.h>
@@ -160,7 +159,7 @@ private:
     std::shared_ptr<GrahamScan_CH_Executor<Scalar>> gs_ch_executor_;
     std::shared_ptr<Bresenhams_Line_Executor<Eigen::Index>> bh_line_executor_;
     std::shared_ptr<Concav_Hull_Generator<Scalar>> concav_hull_generator_;
-    std::shared_ptr<Cubic_Spline<Scalar>> cubic_spline_;
+    // std::shared_ptr<Cubic_Spline<Scalar>> cubic_spline_;
     std::vector<hector_math::Vector2<Eigen::Index>> line_indices_;
     std::vector<hector_math::Vector2<Eigen::Index>> polygonIte_indices_;
     hector_math::Polygon<Eigen::Index> polygonpoints_indices_;
@@ -179,6 +178,7 @@ private:
 
 
 namespace mapbag_editor_server {
+    
 using namespace std;
 using namespace hector_world_heightmap;
 
@@ -264,8 +264,8 @@ public:
             uniquePointers.insert( command );  
         }
 
-        // 现在uniquePointers中包含了所有不重复的指针
-        // 清空uniquePointers中的指针，同时确保每个指针只被释放一次
+        // Now the uniquePointers contain all the pointers that are not duplicates. 现在uniquePointers中包含了所有不重复的指针
+        // Empty the pointers in uniquePointers, making sure to release each pointer only once. 清空uniquePointers中的指针，同时确保每个指针只被释放一次
         for ( Command* ptr : uniquePointers ) {
             delete ptr;
         }
@@ -279,7 +279,7 @@ public:
             history_backup_.pop();
             uniquePointers.insert( command );
         }
-        while (!redo_list_.empty()) {
+        while ( !redo_list_.empty() ) {
             Command* command = redo_list_.top();
             redo_list_.pop();
             uniquePointers.insert( command );  

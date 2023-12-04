@@ -43,9 +43,11 @@ enum EditorMode {
     MODE_VERSCHIEBEN,
 };
 
-enum SelectionMode {
-    Sequentiell,
-    Konvexhull
+enum SmoothMode {
+    Adaptiv,
+    Medien,
+    Bezier_x,
+    Bezier_y,
 };
 
 public:
@@ -76,6 +78,8 @@ public:
 
     Q_INVOKABLE void changeEditorMode( int editor_mode );
 
+    Q_INVOKABLE void changeSmoothMode( int smooth_mode );
+
     Q_INVOKABLE void setMarker( int selected_Polygon_nummer );
 
     Q_INVOKABLE void setHeight( int mode, float height );
@@ -100,7 +104,7 @@ public:
 
     Q_INVOKABLE void smooth_filter(); 
 
-    Q_INVOKABLE void onInterpolation();
+    void cubic_spline( hector_math::GridMap<float> &map, int mode, hector_math::GridMap<float> &returned_map ); 
 
     void publishToolmapInformation( const typename hector_world_heightmap::HeightmapRef<float>::ConstPtr &map );
 
@@ -153,6 +157,7 @@ protected:
     rviz::BoolProperty *polygonpoint_3d_proporty_ = nullptr;
 
     EditorMode editor_mode_;
+    SmoothMode smooth_mode_;
 
 private: 
     void submapSubscribe( const grid_map_msgs::GridMap &msg, hector_world_heightmap::Heightmap<float>::Ptr &map );

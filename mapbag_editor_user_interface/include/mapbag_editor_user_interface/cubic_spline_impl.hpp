@@ -1,12 +1,12 @@
-#ifndef MAPBAG_EDITOR_SERVER_CUBIC_SPLINE_IMPL_HPP
-#define MAPBAG_EDITOR_SERVER_CUBIC_SPLINE_IMPL_HPP
+#ifndef MAPBAG_EDITOR_USER_INTERFACE_CUBIC_SPLINE_IMPL_HPP
+#define MAPBAG_EDITOR_USER_INTERFACE_CUBIC_SPLINE_IMPL_HPP
 
 #include "cubic_spline.h"
 
 #include <Eigen/Core>
 #include <Eigen/Dense>
 
-namespace mapbag_editor_server
+namespace mapbag_editor_user_interface
 {
 
 /*！
@@ -31,7 +31,7 @@ Cubic_Spline<Scalar>::Cubic_Spline( const std::vector<std::pair<Eigen::Index, Sc
 {
     x_differences_.clear();
     cubicspline_parameters_.clear();
-    for (const auto& point : points_input) {
+    for ( const auto& point : points_input ) {
         if ( !std::isnan( point.second ) ) { filtered_points_.push_back( point ); }
         else interpolate_points_.push_back( point );
     }
@@ -41,10 +41,7 @@ Cubic_Spline<Scalar>::Cubic_Spline( const std::vector<std::pair<Eigen::Index, Sc
     sort( interpolate_points_.begin(), interpolate_points_.end(),
               []( const std::pair<Eigen::Index, Scalar> &a, const std::pair<Eigen::Index, Scalar> &b ) {
                   return a.first < b.first; } );
-    // ROS_INFO_STREAM_NAMED("MapbagEditorServer", 
-    //                       "test: " <<  filtered_points_.size() );
-    // ROS_INFO_STREAM_NAMED("MapbagEditorServer", 
-    //                       "test: " <<  interpolate_points_.size() );
+
     cubicSpline_init( filtered_points_ );
     cubicSpline_Insert();
 }
@@ -159,6 +156,6 @@ void Cubic_Spline<Scalar>::cubicSpline_Insert()
     }
 }
 
-} //namespace mapbag_editor_server
+} //namespace mapbag_editor_user_interface
 
-#endif // MAPBAG_EDITOR_SERVER_CUBIC_SPLINE_IMPL_HPP
+#endif // MAPBAG_EDITOR_USER_INTERFACE_CUBIC_SPLINE_IMPL_HPP

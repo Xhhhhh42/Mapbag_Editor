@@ -43,7 +43,7 @@ MapbagEditorServer<Scalar>::MapbagEditorServer( const ros::NodeHandle &nh, const
   save_service_ = pnh_.advertiseService( "save_map", &MapbagEditorServer<Scalar>::onSaveMap, this );
   load_service_ = pnh_.advertiseService( "load_map", &MapbagEditorServer<Scalar>::onLoadMap, this );
   polygongridmap_service_ = pnh_.advertiseService( "polygongridmap", &MapbagEditorServer<Scalar>::onPolygonGridMap, this );
-  // interpolation_service_ = pnh_.advertiseService( "interpolation", &MapbagEditorServer<Scalar>::onInterpolation, this );
+  interpolation_service_ = pnh_.advertiseService( "interpolation", &MapbagEditorServer<Scalar>::onInterpolation, this );
   clearmapbag_service_ = pnh_.advertiseService( "clearmapbag", &MapbagEditorServer<Scalar>::onClearMapbag, this );
   undo_service_ = pnh_.advertiseService( "undo", &MapbagEditorServer<Scalar>::onUndo, this );
   redo_service_ = pnh_.advertiseService( "redo", &MapbagEditorServer<Scalar>::onRedo, this );
@@ -69,29 +69,6 @@ MapbagEditorServer<Scalar>::MapbagEditorServer( const ros::NodeHandle &nh, const
   intepolation_mode_ = 0;
   smooth_mode_ = 0;
 
-
-  //test
-  std::vector<std::pair<Eigen::Index, Scalar>> test_input;
-  test_input.emplace_back( 1, 0.8 );
-  test_input.emplace_back( 2, numeric_limits<Scalar>::quiet_NaN() );
-  test_input.emplace_back( 3, numeric_limits<Scalar>::quiet_NaN() );
-  test_input.emplace_back( 4, numeric_limits<Scalar>::quiet_NaN() );
-  test_input.emplace_back( 5, numeric_limits<Scalar>::quiet_NaN() );
-  test_input.emplace_back( 6, 0.2 );
-  // test_input.emplace_back( 7, numeric_limits<Scalar>::quiet_NaN() );
-  // test_input.emplace_back( 8, 0.4 );
-  // test_input.emplace_back( 9, 0.7 );
-  // test_input.emplace_back( 10, numeric_limits<Scalar>::quiet_NaN() );
-  // test_input.emplace_back( 11, numeric_limits<Scalar>::quiet_NaN() );
-
-  cubic_spline_ = make_shared<Cubic_Spline<Scalar>>( test_input );
-  std::vector<std::pair<Eigen::Index, Scalar>> result = cubic_spline_->interpolated_points();
-  for ( size_t i = 0; i < result.size(); i++ ) 
-  {
-    // ROS_INFO_STREAM_NAMED("MapbagEditorServer", 
-    //                       "test: " << "index: " << result[i].first << "value: " << result[i].second );
-  }
-  
 }
 
 
@@ -134,7 +111,7 @@ bool MapbagEditorServer<Scalar>::onSaveMap( hector_std_msgs::StringServiceReques
 
 
 /** Speichern der modifizierten Karte.
- * @param path Path to the map file.
+ *  @param path Path to the map file.
  */
 template<typename Scalar>
 bool MapbagEditorServer<Scalar>::saveMap( const std::string &path )
@@ -143,16 +120,19 @@ bool MapbagEditorServer<Scalar>::saveMap( const std::string &path )
     ROS_ERROR( "Map is not initialized yet and can not be saved!" );
     return false;
   }
-  ROS_INFO_STREAM_NAMED("MapbagEditorServer", 
-                          "Mapsave: " << path );
+
+  //Save-Map Funciton
   if( path == "save" ) {
     hector_world_heightmap::io::writeToFile( *mapbag_, map_url_ );
     ROS_INFO_STREAM_NAMED("MapbagEditorServer", 
-                          "Mapsave: " << map_url_ );
-    ROS_INFO_STREAM_NAMED("MapbagEditorServer", 
-                          "Mapsave: " << path );
+                          "Saved map: " << map_url_ );
   }
-  else { hector_world_heightmap::io::writeToFile( *mapbag_, path ); }
+  //Save-Map-As Funciton: in new mapfile(.whm)
+  else { 
+    hector_world_heightmap::io::writeToFile( *mapbag_, path ); 
+    ROS_INFO_STREAM_NAMED("MapbagEditorServer", 
+                          "Saved map: " << path );  
+  }
   invoker_->reset();
   saveModeChange( int( 0 ));
   return true;
@@ -160,7 +140,7 @@ bool MapbagEditorServer<Scalar>::saveMap( const std::string &path )
 
 
 /** Response to service "load_map" requests.
- * @param req Request object representing a string type.
+ *  @param req Request object representing a string type.
  */
 template<typename Scalar>
 bool MapbagEditorServer<Scalar>::onLoadMap( hector_std_msgs::StringServiceRequest &req,
@@ -169,7 +149,8 @@ bool MapbagEditorServer<Scalar>::onLoadMap( hector_std_msgs::StringServiceReques
 
 
 /** Karte öffnen (Mapbag) und Visualisierung in RViz.
- * @param path Path to the map file.
+ *  Open map (Mapbag) and visualization in RViz.
+ *  @param path Path to the map file.
  */
 template<typename Scalar>
 bool MapbagEditorServer<Scalar>::loadMap( const std::string &path )
@@ -219,6 +200,8 @@ void MapbagEditorServer<Scalar>::updatePolygonPoints( const std::vector<hector_m
 
 /** Optimierung der Start- und Zielpunkte von Linien.
  *  ( Da sich der Mittelpunkt bei der Erstellung der Unterkarte von (2, 2) im oberen rechten Punkt des Unterkartenquadrats befindet )
+ *  Optimization of the start and end points of lines.
+ *  ( Since the center point is in the upper right point of the sub-map square when creating the sub-map of (2, 2) )
  * @param index_punkt input Index of point.
  */
 template<typename Scalar>
@@ -504,6 +487,9 @@ void MapbagEditorServer<Scalar>::index_line_generate( const hector_math::Vector3
 }
 
 
+/** Save the sub-map before making changes.
+ * @param map Original sub-map.
+ */
 template<typename Scalar>
 void MapbagEditorServer<Scalar>::invoker_backup( const std::shared_ptr<HeightmapRef<float>>& map ) 
 {
@@ -542,10 +528,16 @@ bool MapbagEditorServer<Scalar>::onInterpolation( hector_std_msgs::StringService
 }
 
 
+/** bilinear interpolation.
+ */
 template<typename Scalar>
 bool MapbagEditorServer<Scalar>::interpolation() 
 {
   if( polygonIte_indices_.empty() ) return false;
+  hector_world_heightmap::Heightmap<float>::Ptr mapbag_backup = std::make_shared<Heightmap<float>>(
+                                                                    submap_->map(), submap_->resolution(), submap_->origin(), 
+                                                                    submap_->frame(), static_cast<long long>( ros::Time::now().toNSec() ) ); 
+  invoker_backup( mapbag_backup );
 
   unordered_map<Eigen::Index, vector<Vector2<Eigen::Index>>> rowToIndicesMap, colToIndicesMap;
   for ( const auto& it : polygonIte_indices_ ) {
@@ -556,10 +548,8 @@ bool MapbagEditorServer<Scalar>::interpolation()
   for ( const auto& it : polygonIte_indices_ ) {
     MapIndex index = { it[0], it[1] };
     
-    if( isnan( submap_->getValueAt( index ) ) ) {
+    if( isnan( submap_->getValueAt( index ) )) {
       Scalar nan_bilinear = numeric_limits<Scalar>::quiet_NaN();
-      // ROS_INFO_STREAM_NAMED( "MapbagEditorServer",
-      //                 "interpolation: " << it[0] << "y: "<< it[1] );
 
       auto left_result = findNearestNonNaN( rowToIndicesMap[it[0]], { index.row, index.col - 1 }, 0, -1 );
       auto right_result = findNearestNonNaN( rowToIndicesMap[it[0]], { index.row, index.col + 1 }, 0, 1 );
@@ -587,12 +577,12 @@ bool MapbagEditorServer<Scalar>::interpolation()
                         // * ( index.row - lower_result.first.row ) / ( upper_result.first.row - lower_result.first.row ))
                         // + 0.5 * ( left_value + ( right_value - left_value ) 
                         // * ( index.col - left_result.first.col ) / ( upper_result.first.col - right_result.first.col ));            
-      } else if (lower_found && upper_found) {
+      } else if ( lower_found && upper_found ) {
         nan_bilinear = ( index.row * ( upper_value - lower_value ) + lower_value * upper_result.first.row - upper_value * lower_result.first.row )
                         / ( upper_result.first.row - lower_result.first.row );
                       //  ( lower_value + ( upper_value - lower_value ) 
                       //   * ( index.row - lower_result.first.row ) / ( upper_result.first.row - lower_result.first.row ));
-      } else if (left_found && right_found) {
+      } else if ( left_found && right_found ) {
         nan_bilinear = ( left_value + ( right_value - left_value ) 
                         * ( index.col - left_result.first.col ) / ( upper_result.first.col - right_result.first.col ));
       } 
@@ -600,7 +590,12 @@ bool MapbagEditorServer<Scalar>::interpolation()
     }
   } 
   submap_->finishUpdate();
-  publishMapbagInformation();
+  grid_map_msgs::GridMap msg = heightmapToMsg<Scalar>( submap_ );
+  typename hector_world_heightmap::Heightmap<Scalar>::Ptr map = msgToHeightmap<Scalar>( msg, "elevation" );
+  
+  saveModeChange( int( 3 ));
+  Command* command = new EditMapCommand( this, map, int( 3 ));
+  invoker_->execute( command );
   return true;
 }
 

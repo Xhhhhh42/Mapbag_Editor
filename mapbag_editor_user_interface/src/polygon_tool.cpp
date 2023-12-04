@@ -1,5 +1,7 @@
 #include "mapbag_editor_user_interface/polygon_tool.h"
 #include "mapbag_editor_user_interface/adaptive_medien_filter.h"
+#include "mapbag_editor_user_interface/cubic_spline.h"
+#include "mapbag_editor_user_interface/bezier_curve.h"
 
 #include <iostream>
 #include <cmath>
@@ -190,11 +192,8 @@ int PolygonTool::processMouseEvent( rviz::ViewportMouseEvent &event )
       return Render;
     }
 
-  // } else if( editor_mode_ == MODE_EDITOR || editor_mode_ == MODE_PRIMITIVE_ELEMENT ){
-  //   if( editor_mode_ == MODE_EDITOR && map_ == nullptr ) return Render;
-  //   if( editor_mode_ == MODE_PRIMITIVE_ELEMENT && map_ref_ == nullptr ) return Render;
   } else if( editor_mode_ == MODE_EDITOR ){
-    if( map_ == nullptr ) return Render;
+    if( map_ == nullptr ) return rviz::InteractionTool::processMouseEvent( event );
     Ogre::Vector3 intersection;
     static Ogre::Vector3 start_position;
     Ogre::Camera* camera = event.viewport->getCamera(); 
@@ -255,9 +254,6 @@ int PolygonTool::processMouseEvent( rviz::ViewportMouseEvent &event )
     }
     return Render;
   }
-  // } else if ( editor_mode_ == MODE_VERSCHIEBEN ){
-  //   return Render;
-  // }
 
   return rviz::InteractionTool::processMouseEvent( event );
 }
@@ -352,6 +348,21 @@ Q_INVOKABLE void PolygonTool::changeEditorMode( int editor_mode )
       pub_submap_pos_.publish( center_pose );
     }
   }
+}
+
+
+Q_INVOKABLE void PolygonTool::changeSmoothMode( int smooth_mode )
+{
+  if( smooth_mode != 0 && smooth_mode != 1 && smooth_mode != 2 && smooth_mode != 3 ) return;
+  if( smooth_mode == 0 ){
+    smooth_mode_ = Adaptiv;
+  } else if ( smooth_mode == 1 ){
+    smooth_mode_ = Medien;
+  } else if ( smooth_mode == 2 ){
+    smooth_mode_ = Bezier_x;
+  } else if ( smooth_mode == 3 ){
+    smooth_mode_ = Bezier_y;
+  } 
 }
 
 
@@ -524,7 +535,7 @@ Q_INVOKABLE void PolygonTool::submapVerschiebenSave()
  */
 Q_INVOKABLE void PolygonTool::primitiveSave() 
 {
-  grid_map_msgs::GridMap msg = heightmapToMsg<float>( whm_->getMap( 0 ) );
+  grid_map_msgs::GridMap msg = heightmapToMsg<float>( map_ );
   mapVerschieben_pub_.publish( msg );
   publishEmpty();
   clearmap(); 
@@ -688,22 +699,152 @@ Q_INVOKABLE void PolygonTool::primitive( std::vector<int> mode, std::vector<doub
 }
 
 
-/** 
+/** Smoothing operations are performed on selected sub-maps, in different forms 
+ * depending on the different modes selected by the user: 1. Adaptiv Medien 
+ * Filters or 2. Medien Filters. ( filterSize = 5, maxSize = 7 ) 3. Bezier
  */
 Q_INVOKABLE void PolygonTool::smooth_filter()
 {
-  if( map_ == nullptr ) return; 
-  Eigen::Ref<hector_math::GridMap<float>> map_to_editieren = map_->map();
+  if( map_ref_ == nullptr ) return; 
+  Eigen::Ref<hector_math::GridMap<float>> map_to_editieren = map_ref_->map();
   hector_math::GridMap<float> gridMapCopy( map_to_editieren );
-  hector_math::GridMap<float> smoothed_map = adaptiveMeanFilter( gridMapCopy, 3, 7 );
-  // Eigen::MatrixXf& underlyingMap = map_to_editieren.get();
-  map_ = std::make_shared<Heightmap<float>>(
-      smoothed_map, map_->resolution(), map_->origin(), map_->frame(),
-      map_->timestamp() );
+  int filterSize = 5;
+  int maxSize = 7;
+  hector_math::GridMap<float> smoothed_map;
+
+  if( smooth_mode_ == Adaptiv ) smoothed_map = adaptiveMeanFilter( gridMapCopy, filterSize, maxSize );
+  else if( smooth_mode_ == Medien ) { 
+    int medien_filter_size = 5;
+    smoothed_map = meanFilter( gridMapCopy, medien_filter_size ); 
+  } else if( smooth_mode_ == Bezier_x ) { cubic_spline( gridMapCopy, 0, smoothed_map ); }
+  else if( smooth_mode_ == Bezier_y ) { cubic_spline( gridMapCopy, 1, smoothed_map ); }
+
+  // publish to RViz
+  map_ref_ = std::make_shared<Heightmap<float>>(
+      smoothed_map, map_ref_->resolution(), map_ref_->origin(), map_ref_->frame(),
+      map_ref_->timestamp() );
   hector_world_heightmap::integrators::HeightmapIntegrator<float> heightmapIntegrator( whm_ );
-  heightmapIntegrator.integrate( map_, integrators::IntegratorMode::SourceKnown );
+  heightmapIntegrator.integrate( map_ref_, integrators::IntegratorMode::SourceKnown );
   publishToolmapInformation( whm_->getMap( 0 )); 
 }
+
+
+/** Iterate over each row/column of the incoming sub-map to find the first endpoint and 
+ * the neighboring point with the largest rate of change. Use these four points as control 
+ * points for the b-curve. Generate 50 points to fit that b-curve, linearly interpolate 
+ * the coordinate points on the sub-map to complete the smoothing
+ * @param map Incoming sub-maps.
+ * @param mode For which direction is the b-curve smoothed.( mode 1 : y ; mode 0 : x )
+ * @param returned_map Returned smoothed sub-map.
+ */
+void PolygonTool::cubic_spline( hector_math::GridMap<float> &map, int mode, hector_math::GridMap<float> &returned_map ) 
+{
+  if( mode != 0 && mode != 1 ) return;
+
+  int width = map.cols();
+  int height = map.rows();
+  hector_math::GridMap<float> b_map = GridMap<float>::Zero( height, width );
+  b_map.setConstant( std::numeric_limits<float>::quiet_NaN() );
+
+  if( mode == 1 ) {
+    for ( int i = 0; i < height; i++ ) {
+      std::vector<hector_math::Vector2<float>> Ps_ref( 4, hector_math::Vector2<float>(0.0f, 0.0f) );
+      float diff_max = std::numeric_limits<float>::min();
+      Ps_ref[0][0] = 0;
+      Ps_ref[3][0] = width - 1;
+      Ps_ref[0][1] = map( i, 0 );
+      Ps_ref[3][1] = map( i, width - 1 );
+      for ( int j = 1; j < width; j++ ) {
+        float diff = map( i, j ) - map( i, j - 1 );
+        if( diff >= diff_max ) {
+          diff_max = diff;
+          Ps_ref[1][0] = j - 1;
+          Ps_ref[2][0] = j;
+          Ps_ref[1][1] = map( i, j - 1 );
+          Ps_ref[2][1] = map( i, j );
+        }
+      }
+
+      std::vector<float> x_,y_;
+      for( int t = 0; t < 50; t++ ){
+        hector_math::Vector2<float> point;
+        bezierCommon( Ps_ref, (float) t / 50, point ); 
+        x_.push_back( point[0] );
+        y_.push_back( point[1] );
+      }
+
+      int index = 0;
+      int index_vor;
+      float vor;
+      for( size_t k = 0; k < x_.size(); k++ ) {
+        // if( std::abs( x_[i] - std::round( x_[k] )) < 1e-2 ) b_map( i, x_[k] / 1 ) = y_[k];
+        if( index > width - 1 ) break;
+        if( std::abs( x_[k] - index ) < 1e-2 ) {
+          b_map( i, index ) = y_[k];
+          index++;
+          continue;
+        } else if( x_[k] < index ) {
+          index_vor = x_[k];
+          vor = y_[k];
+          continue;
+        } else if( x_[k] > index ) {
+          float value = vor + ( index - index_vor ) * ( y_[k] - vor ) / ( x_[k] - index_vor );
+          b_map( i, index ) = value;
+          index++;
+        }
+      }
+    }
+  } else if( mode == 0 ) {
+    for ( int i = 0; i < width; i++ ) {
+      std::vector<hector_math::Vector2<float>> Ps_ref( 4, hector_math::Vector2<float>(0.0f, 0.0f) );
+      float diff_max = std::numeric_limits<float>::min();
+      Ps_ref[0][0] = 0;
+      Ps_ref[3][0] = height - 1;
+      Ps_ref[0][1] = map( 0, i );
+      Ps_ref[3][1] = map( height - 1, i );
+      for ( int j = 1; j < height; j++ ) {
+        float diff = map( j, i ) - map( j - 1, i );
+        if( diff >= diff_max ) {
+          diff_max = diff;
+          Ps_ref[1][0] = j - 1;
+          Ps_ref[2][0] = j;
+          Ps_ref[1][1] = map( j - 1, i );
+          Ps_ref[2][1] = map( j, i );
+        }
+      }
+
+      std::vector<float> x_,y_;
+      for( int t = 0; t < 50; t++ ){
+        hector_math::Vector2<float> point;
+        bezierCommon( Ps_ref, (float) t / 50, point ); 
+        x_.push_back( point[0] );
+        y_.push_back( point[1] );
+      }
+
+      int index = 0;
+      int index_vor;
+      float vor;
+      for( size_t k = 0; k < x_.size(); k++ ) {
+        if( index > width - 1 ) break;
+        if( std::abs( x_[k] - index ) < 1e-2 ) {
+          b_map( index, i ) = y_[k];
+          index++;
+          continue;
+        } else if( x_[k] < index ) {
+          index_vor = x_[k];
+          vor = y_[k];
+          continue;
+        } else if( x_[k] > index ) {
+          float value = vor + ( index - index_vor ) * ( y_[k] - vor ) / ( x_[k] - index_vor );
+          b_map( index, i ) = value;
+          index++;
+        }
+      }
+    }
+  }
+
+  returned_map = b_map;
+} 
 
 
 /** Publishing Submaps in Tools to RViz.
@@ -845,14 +986,16 @@ void PolygonTool::newCenterSubCallback( const geometry_msgs::Point &center )
   if( last_center_.isZero() ) { last_center_ = new_pos; } 
   else 
   {
-    if( new_pos[0] != last_center_[0] || new_pos[1] != last_center_[1] ) {
+    if( abs( new_pos[0] - last_center_[0] ) > 1E-6 || abs( new_pos[1] - last_center_[1] ) > 1E-6 ) {
+      const Eigen::ArrayXXf map_original = map_->map();
       Eigen::Ref<hector_math::GridMap<float>> map_verschieben = map_->map();
+      map_verschieben = map_original; 
       
       map_ = std::make_shared<Heightmap<float>>(
           map_verschieben, map_->resolution(), new_pos.template topRows<2>(), map_->frame(),
           map_->timestamp() );
     }  
-    if( abs( new_pos[2] - last_center_[2] ) > 1E-4 ) {
+    if( abs( new_pos[2] - last_center_[2] ) > 1E-6 ) {
       const Eigen::ArrayXXf map_original = map_->map();
       Eigen::Ref<hector_math::GridMap<float>> map_to_editieren = map_->map();
       map_to_editieren = map_original + ( new_pos[2] - last_center_[2] ); 
