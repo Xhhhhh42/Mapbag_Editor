@@ -1,4 +1,6 @@
 # MapBag Editor Server
+Maintainer: Yuchen Xia
+
 Server node of the MapBag Editor
 
 # Prerequisites
