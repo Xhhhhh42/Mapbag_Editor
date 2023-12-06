@@ -20,7 +20,7 @@ Following the brief introduction for different functions in the MapBag Editor:
 
 Important Tip:
 
-Don't forget to click on "Confirm Polygon" to generate a Submap before using any editing functions !!!
+**Don't forget to click on "Confirm Polygon" to generate a Submap before using any editing functions !!!**
 
 ## Build
 Clone package `mapbag_editor_user_interface` to your workspace:
@@ -38,14 +38,14 @@ It requires an MapBag Editor Server node when editing maps.
 ## User_Interface
 Intuitive MapBag Editor for creating, editing and visualizing synthetic elevation maps.
 
-<img src="./doc/Userinterface.png" alt="User Interface" width="1000" height="600">
+<img src="./doc/Userinterface.png" alt="User Interface" width="800" height="450">
 
-1. Editor Menu
+1. __Editor Menu__
 
 The "Editor menu" allows you to complete import and export processes for maps and delete the current map. 
 The Editor user interface can also be hidden or displayed via the menu. 
 
-2. Systemsettings
+2. __Systemsettings__
 
 The "System settings" allow you to customize specific settings in the editor, such as the mode in which the editor_server selects polygon submaps, the type of interpolation operations or smoothing operations of submaps. 
 
@@ -64,7 +64,7 @@ In addition, the editor has an interactive marker that allows you to move sub-ma
 ## Polygonpoints_Tool
 The plug-in tool integrates seamlessly into the RViz user interface and allows the user to create, edit and delete polygon vertices directly. These points are used to define polygon target sub-maps. 
 
-<img src="./doc/Plugin_tool.png" alt="User Interface" width="1000" height="600">
+<img src="./doc/Plugin_tool.png" alt="User Interface" width="800" height="450">
 
 1. PolygonPoint Tool
 
