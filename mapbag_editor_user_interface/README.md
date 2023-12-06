@@ -16,9 +16,11 @@ Following the brief introduction for different functions in the MapBag Editor:
 - [Add Primitive Element](#add-primitive-element)
 - [Smooth Submap](#smooth-submap)
 - [Interpolate Subamp](#interpolate-subamp)
+- [Undo/Redo](#undo/redo)
 
 Important Tip:
-Don't forget to click on "Confirm Polygon" to generate a Submap before using any editing functions!!!
+
+Don't forget to click on "Confirm Polygon" to generate a Submap before using any editing functions !!!
 
 ## Build
 Clone package `mapbag_editor_user_interface` to your workspace:
@@ -35,8 +37,9 @@ It requires an MapBag Editor Server node when editing maps.
 
 ## User_Interface
 Intuitive MapBag Editor for creating, editing and visualizing synthetic elevation maps.
-<img src="./doc/Userinterface.png" alt="User Interface" width="500" height="300">
-<!-- ![UserInterface](./doc/Userinterface.png) -->
+
+<img src="./doc/Userinterface.png" alt="User Interface" width="1000" height="600">
+
 1. Editor Menu
 
 The "Editor menu" allows you to complete import and export processes for maps and delete the current map. 
@@ -61,6 +64,8 @@ In addition, the editor has an interactive marker that allows you to move sub-ma
 ## Polygonpoints_Tool
 The plug-in tool integrates seamlessly into the RViz user interface and allows the user to create, edit and delete polygon vertices directly. These points are used to define polygon target sub-maps. 
 
+<img src="./doc/Plugin_tool.png" alt="User Interface" width="1000" height="600">
+
 1. PolygonPoint Tool
 
 The RViz PluginTool is used to determine the vertices that define the polygonal sub-map.
@@ -76,26 +81,24 @@ A "Delete All" button allows the user to delete all points at once.
 
 When the user clicks on any polygon point in the list, the editor visualizes this with an arrow marker indicating which polygon point is currently being edited.
 
-- [Delete Subamp](#delete-subamp)
-- [Setting the height value](#setting-the-height-value)
-- [Move Submap](#move-submap)
-- [Add Primitive Element](#add-primitive-element)
-- [Smooth Submap](#smooth-submap)
-- [Interpolate Subamp](#interpolate-subamp)
-
 ## Delete Subamp
 ![delete](./doc/delete.gif)
 
 ## Setting the height value
+![height](./doc/height.gif)
 
 ## Move Submap
+![move](./doc/F-verschieben.gif)
 
 ## Add Primitive Element
-![PrimitiveElement](./doc/Pri_Element.gif)
+![primitiveelement](./doc/Pri_Element.gif)
 
 ## Smooth Submap
 
 ## Interpolate Subamp
+![interpolate](./doc/interpolation.gif)
 
+## Undo/Redo
+![undo_redo](./doc/redo_undo.gif)
 
 
