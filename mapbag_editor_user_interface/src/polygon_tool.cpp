@@ -90,6 +90,7 @@ void PolygonTool::onInitialize()
 
   skalenfaktor_ = 50;
   depth_ = 100;
+  last_center_.setZero();
 }
 
 
@@ -252,7 +253,7 @@ int PolygonTool::processMouseEvent( rviz::ViewportMouseEvent &event )
         tempo_ref_ = tempo_;
       } 
     }
-    return Render;
+    // return Render;
   }
 
   return rviz::InteractionTool::processMouseEvent( event );
@@ -513,7 +514,7 @@ Q_INVOKABLE void PolygonTool::submapVerschiebenClear()
 {
   clearPolygonpoints();
   verschieben_func_called_ = false;
-  last_center_.setZero();;
+  last_center_.setZero();
   map_ = nullptr;
   map_ref_ = nullptr;
   publishEmpty();
