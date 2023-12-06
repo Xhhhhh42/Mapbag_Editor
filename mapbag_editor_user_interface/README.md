@@ -38,7 +38,7 @@ It requires an MapBag Editor Server node when editing maps.
 ## User_Interface
 Intuitive MapBag Editor for creating, editing and visualizing synthetic elevation maps.
 
-<img src="./doc/Userinterface.png" alt="User Interface" width="800" height="450">
+<img src="./doc/Userinterface.png" alt="User Interface" width="800" height="550">
 
 1. __Editor Menu__
 
@@ -64,7 +64,7 @@ In addition, the editor has an interactive marker that allows you to move sub-ma
 ## Polygonpoints_Tool
 The plug-in tool integrates seamlessly into the RViz user interface and allows the user to create, edit and delete polygon vertices directly. These points are used to define polygon target sub-maps. 
 
-<img src="./doc/Plugin_tool.png" alt="User Interface" width="800" height="450">
+<img src="./doc/Plugin_tool.png" alt="User Interface" width="800" height="550">
 
 1. __PolygonPoint Tool__
 
