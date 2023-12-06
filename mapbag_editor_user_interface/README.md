@@ -18,7 +18,7 @@ Following the brief introduction for different functions in the MapBag Editor:
 - [Interpolate Subamp](#interpolate-subamp)
 - [Undo/Redo](#undo/redo)
 
-Important Tip:
+**Important Tip:**
 
 **Don't forget to click on "Confirm Polygon" to generate a Submap before using any editing functions !!!**
 
@@ -49,15 +49,15 @@ The Editor user interface can also be hidden or displayed via the menu.
 
 The "System settings" allow you to customize specific settings in the editor, such as the mode in which the editor_server selects polygon submaps, the type of interpolation operations or smoothing operations of submaps. 
 
-3. Control Panel
+3. __Control Panel__
 
 Various editing operations can be carried out via the "Control Panel", such as deleting, interpolating or moving sub-maps. 
 
-4. Display Panel
+4. __Display Panel__
 
 The "Display Panel" shows information about the used plug-in tool . 
 
-5. Interactive Marker
+5. __Interactive Marker__
 
 In addition, the editor has an interactive marker that allows you to move sub-maps.
 
@@ -66,18 +66,18 @@ The plug-in tool integrates seamlessly into the RViz user interface and allows t
 
 <img src="./doc/Plugin_tool.png" alt="User Interface" width="800" height="450">
 
-1. PolygonPoint Tool
+1. __PolygonPoint Tool__
 
 The RViz PluginTool is used to determine the vertices that define the polygonal sub-map.
 By clicking on the toolbar, the PluginTool is activated and the user can define the corner points.
 
-2. Liste der PolygonPunkte
+2. __Liste der PolygonPunkte__
 
 The list in the "Display Panel" shows the 3D coordinates of the individual points. 
 Using the buttons provided, the user can perform actions such as adding or removing individual points. 
 A "Delete All" button allows the user to delete all points at once.
 
-3. Punkt Marker
+3. __Punkt Marker__
 
 When the user clicks on any polygon point in the list, the editor visualizes this with an arrow marker indicating which polygon point is currently being edited.
 
