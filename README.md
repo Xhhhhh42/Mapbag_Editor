@@ -6,9 +6,9 @@ Intuitive MapBag Editor for creating, editing and visualizing synthetic elevatio
 <img src="./mapbag_editor_user_interface/doc/Userinterface.png" alt="User Interface" width="800" height="550">
 
 ## Available Tools
--Delete Subamp
+- Delete Subamp
 
--Setting the height value
+- Setting the height value
 
 - Move Submap
 
